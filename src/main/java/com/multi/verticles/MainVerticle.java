@@ -1,4 +1,4 @@
-package com.example.starter;
+package com.multi.verticles;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -9,20 +9,15 @@ import org.slf4j.LoggerFactory;
 public class MainVerticle extends AbstractVerticle {
   private static final Logger LOG = LoggerFactory.getLogger(MainVerticle.class);
 
+  public static void main(String[] args) {
+    Vertx v = Vertx.vertx();
+    v.deployVerticle(new MainVerticle());
+  }
+
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     LOG.debug("starting main verticle= "+ getClass().getName());
-    vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(8888, http -> {
-      if (http.succeeded()) {
-        startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
-      } else {
-        startPromise.fail(http.cause());
-      }
-    });
+    vertx.deployVerticle(new VerticleA());
+    startPromise.complete();
   }
 }
